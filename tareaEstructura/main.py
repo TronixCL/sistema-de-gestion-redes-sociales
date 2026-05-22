@@ -27,8 +27,7 @@ def cargar_sistema(nombre_archivo):
     with open(ruta_dataset, mode='r', encoding='utf-8') as archivo:
         lector = csv.reader(archivo)
         
-        for fila in lector:
-            # Como ahora tienes 5 columnas, nos aseguramos de que vengan completas
+        for fila in lector
             if len(fila) < 5: 
                 continue
             
