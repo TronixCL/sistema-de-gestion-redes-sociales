@@ -7,7 +7,6 @@ def curarDatos(nombreEntrada:str):
     rutaSalida = os.path.join(directorioActual, 'dataset_curado.csv')
 
     datosCurados = []
-    idsVistos = set() 
 
     with open(rutaEntrada, mode='r', encoding='utf-8') as archivo:
         columnas = [0, 1, 2, 4, 6, 12]
@@ -23,9 +22,6 @@ def curarDatos(nombreEntrada:str):
                 
                 if not owner_id.isdigit():
                     continue # Si tiene letras o caracteres raros, saltamos la fila
-                
-                # Registramos el ID válido en nuestro set
-                idsVistos.add(owner_id)
                 
                 # Seguimos limpiando los saltos de línea 
                 filaFiltrada = [parametros[i].replace('\n', ' ') for i in columnas]
