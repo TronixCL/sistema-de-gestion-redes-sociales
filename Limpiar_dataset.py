@@ -2,18 +2,18 @@ import os
 import csv 
 
 def curarDatos(nombreEntrada:str):
-    directorio_actual = os.path.dirname(os.path.abspath(__file__))
-    ruta_entrada = os.path.join(directorio_actual, nombreEntrada)
-    ruta_salida = os.path.join(directorio_actual, 'dataset_curado.csv')
+    directorioActual = os.path.dirname(os.path.abspath(__file__))
+    rutaEntrada = os.path.join(directorioActual, nombreEntrada)
+    rutaSalida = os.path.join(directorioActual, 'dataset_curado.csv')
 
-    datos_curados = []
-    ids_vistos = set() 
+    datosCurados = []
+    idsVistos = set() 
 
-    with open(ruta_entrada, mode='r', encoding='utf-8') as archivo:
+    with open(rutaEntrada, mode='r', encoding='utf-8') as archivo:
         columnas = [0, 1, 2, 4, 6, 12]
         lector = csv.reader(archivo) 
-        primer_fila = next(lector, None)
-        datos_curados.append([primer_fila[i] for i in columnas])
+        primerFila = next(lector, None)
+        datosCurados.append([primerFila[i] for i in columnas])
         for parametros in lector: 
             if not parametros:
                 continue
@@ -25,20 +25,20 @@ def curarDatos(nombreEntrada:str):
                     continue # Si tiene letras o caracteres raros, saltamos la fila
                 
                 # Registramos el ID válido en nuestro set
-                ids_vistos.add(owner_id)
+                idsVistos.add(owner_id)
                 
-                # Seguimos limpiando los saltos de línea (Enters)
-                fila_filtrada = [parametros[i].replace('\n', ' ') for i in columnas]
+                # Seguimos limpiando los saltos de línea 
+                filaFiltrada = [parametros[i].replace('\n', ' ') for i in columnas]
                 
                 # Guardamos la lista entera
-                datos_curados.append(fila_filtrada)
+                datosCurados.append(filaFiltrada)
             else: 
                 continue          
                 
     # Usamos csv.writer para guardar el archivo
-    with open(ruta_salida, mode='w', encoding='utf-8', newline='') as archivo_salida:
+    with open(rutaSalida, mode='w', encoding='utf-8', newline='') as archivo_salida:
         escritor = csv.writer(archivo_salida)
-        escritor.writerows(datos_curados)
+        escritor.writerows(datosCurados)
 
 if __name__ == '__main__':
     curarDatos('instagram_data.csv')
