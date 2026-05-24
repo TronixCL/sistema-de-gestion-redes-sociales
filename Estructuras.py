@@ -1,6 +1,6 @@
-# ==============================================================================
+
 # 1. MODELO DE DATOS EN MEMORIA DINÁMICA 
-# ==============================================================================
+
 class Post:
     def __init__(self, idPost, texto):
         self.idPost = idPost
@@ -19,9 +19,9 @@ class Usuario:
         self.cabezaPosts = nuevoPost
         return nuevoPost  # Retorna la referencia al objeto creado
 
-# ==============================================================================
+
 # 2. ÍNDICE INVERTIDO DE PALABRAS 
-# ==============================================================================
+
 class NodoPosteoPalabra:
     def __init__(self, postObj):
         self.post = postObj  # Referencia al objeto Post real
@@ -86,9 +86,9 @@ class IndicePalabras:
             actual = actual.siguiente
         print(f"\n[-] La palabra '{palabra}' no se encuentra registrada.")
 
-# ==============================================================================
+
 # 3. ÍNDICE INVERTIDO SOCIAL 
-# ==============================================================================
+
 class NodoSimple:
     def __init__(self, dato):
         self.dato = dato
