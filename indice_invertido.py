@@ -86,7 +86,6 @@ class ProcesadorDataset:
         # Convertir a minúsculas y eliminar puntuación
         texto = texto.lower()
        
-        
         # Tokenizar y filtrar stopwords
         palabras = texto.split()
         return [p for p in palabras if p not in STOPWORDS and len(p) > 2 and p.isalpha()]
@@ -107,7 +106,7 @@ class ProcesadorDataset:
     
     def cargar_datos(self):
         # Carga el archivo CSV y construye todas las estructuras
-        print("Cargando dataset...")
+        print("Cargando dataset:\n")
         ruta_csv = os.path.join(os.path.dirname(os.path.abspath(__file__)), self.archivo)
         with open(ruta_csv, 'r', encoding='utf-8') as archivo:
             # Detectar el delimitador (CSV puede ser coma o punto y coma)
@@ -149,10 +148,10 @@ class ProcesadorDataset:
                         self.indice_posts.indexar(termino, shortcode)
                 
                 contador += 1
-                if contador % 200 == 0:
-                    print(f"  Procesados {contador} registros...")
+                if contador % 100 == 0:
+                    print(f"  Procesados {contador} registros")
         
-        print(f"\n¡Carga completa!")
+        print(f"\nRegistros leidos")
         print(f"  Usuarios: {len(self.usuarios)}")
         print(f"  Posts: {len(self.posts)}")
         print(f"  Términos indexados: {len(self.indice_posts.indice)}")
@@ -184,18 +183,14 @@ class RedSocial:
     # Interfaz del sistema
     os.system('cls')
     def __init__(self, archivo_dataset):
-        print("=" * 50)
-        print("SISTEMA DE ÍNDICE INVERTIDO")
-        print("=" * 50)
+        print("Sistema de índice invertido\n")
         self.procesador = ProcesadorDataset(archivo_dataset)
         self.procesador.cargar_datos()
     
     def menu(self):
         # Menú principal interactivo
         while True:
-            print("\n" + "=" * 40)
-            print("MENÚ PRINCIPAL")
-            print("=" * 45)
+            print("\nMenú principal\n")
             print("1. Buscar posts por palabra clave")
             print("2. Ver seguidores de un usuario")
             print("3. Salir")
@@ -222,8 +217,9 @@ class RedSocial:
         
         print(f"\nResultados para '{termino}': {len(resultados)} posts encontrados")
         if resultados:
-            print("\nPrimeros 10 resultados:")
-            for i, shortcode in enumerate(resultados[:10], 1):
+            print("\nResultados encontrados:")
+            # se utiliza el enumerar resultado porque lo que arroja resultados son los captions en si
+            for i, shortcode in enumerate(resultados):
                 self.procesador.mostrar_post(shortcode)
         elif termino in STOPWORDS:
             print(f" La palabra '{termino}' es una stopword y no se indexa. ")
