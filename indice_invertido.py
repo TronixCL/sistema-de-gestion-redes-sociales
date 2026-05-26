@@ -1,6 +1,5 @@
 import csv
 import os
-import re
 from estructuras import ListaEnlazada
 
 def cargar_stopwords(archivo=os.path.dirname(os.path.abspath(__file__)) + '/stopwords.txt'):
@@ -69,8 +68,6 @@ class Post:
         self.caption = caption
         self.likes = likes
 
-    def __str__(self):
-        return f"Post {self.shortcode} hecho por {self.username}: {self.caption[:50]}..."
 
 class ProcesadorDataset:
     # Carga y procesa el dataset construyendo los indices
@@ -88,9 +85,7 @@ class ProcesadorDataset:
         
         # Convertir a minúsculas y eliminar puntuación
         texto = texto.lower()
-        texto = re.sub(r'[^\w\s]', ' ', texto)  # Reemplaza puntuación con espacios
-        texto = re.sub(r'\d+', '', texto)       # Elimina números
-        texto = re.sub(r'http\S+|www\S+|@\S+', '', texto)  # Elimina URLs y mentions
+       
         
         # Tokenizar y filtrar stopwords
         palabras = texto.split()
@@ -145,7 +140,7 @@ class ProcesadorDataset:
                 
                 # Crear post
                 if shortcode:
-                    post = Post(shortcode, owner_id, caption, likes)
+                    post = Post(shortcode, owner_username, caption, likes)
                     self.posts[shortcode] = post
                     
                     # Indexar términos del caption
@@ -187,7 +182,7 @@ class ProcesadorDataset:
 
 class RedSocial:
     # Interfaz del sistema
-    
+    os.system('cls')
     def __init__(self, archivo_dataset):
         print("=" * 50)
         print("SISTEMA DE ÍNDICE INVERTIDO")
@@ -230,6 +225,8 @@ class RedSocial:
             print("\nPrimeros 10 resultados:")
             for i, shortcode in enumerate(resultados[:10], 1):
                 self.procesador.mostrar_post(shortcode)
+        elif termino in STOPWORDS:
+            print(f" La palabra '{termino}' es una stopword y no se indexa. ")
         else:
             print(f" No hay posts con la palabra '{termino}'.")
 
