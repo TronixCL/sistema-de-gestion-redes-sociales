@@ -9,26 +9,69 @@ La forma en la que se utilizan a grandes rasgos es:
     b) Buscar un nombre de usuario y mostrar la lista de seguidores de este.<br>
     c) Finalizar las consultas.
 
-Ahora se detallará que hace cada funcion del codigo:
------------------------------------------------------------
-## curado_dataset.py:
-### Bibliotecas: 
-**"os": os es utilizada para la obtención correcta de la ruta de acceso del dataset original que se filtra. <br>
-"csv": csv es utilizada para la correcta manipulación del archivo en caso de que haya problemas con los metodos estandar de python. <br>
-"random": random es utilizada para el algoritmo función que permite el agregado de seguidores a un usuario en particular.**
-### Funciones:
-**curar_datos(nombreEntrada: str):** Esta función filtra y organiza el dataset original obteniendo el directorio
-de la carpeta donde se encuentra todo el proyecto, toma la ruta del archivo del dataset original y tambien el nuevo dataset que almacena como dos variables por el nombre de "ruta_entrada" y "ruta_salida" para después crear una variable lista donde almacena todos los datos del nuevo dataset, también es creado un set para guardar cada owner_id visto (para prevenir que se repitan los posts de una misma persona, esto por decisión del equipo y reducir tiempos de carga). <br>
-Se toma abre el dataset en modo lectura como la variable "archivo", con el metodo csv.reader(archivo), y se guarda el encabezado en otra variable llamado "header" se toma esta nueva variable y se filtra con las columnas a usar más la columna que se crea del algoritmo de seguidores aleatorios y se almacena en el nuevo dataset con un .append(). <br>
-Se crea un loop for que lee cada fila del csv como una lista de parametros, donde se crean las siguientes restricciones para filtrarla de manera adecuada: <br>
-- linea 28: si la fila esta vacia salta a la siguiente iteración
-- linea 35-47: se verifica que la fila tenga los 14 parametros del dataset, se extrae la owner_id de la fila y con eso se crean 2 condicionales, si el owner_id no es numerico se salta la fila, y si el owner_id es parte de la lista de ids ya vistas se salta tambien, luego en caso de no estarlo se agrega a la lista y luego filtra que filas se van a utilizar en el dataset curado para luego reemplazarlas en el nuevo dataset, hacer un salto de linea y agregarlos con un .append()
-------------------------------------------------------------
-## estructuras.py:
-### Clases: 
-### Funciones:
-------------------------------------------------------------
-## indice_inverso.py:
-### Bibliotecas
-### Clases:
-### Funciones:
+## Codigos:
+-----------
+### curado_dataset.py:
+#### Bibliotecas: 
+- **"os":** os es utilizada para la obtención correcta de la ruta de acceso del dataset original que se filtra. <br>
+- **"csv":** csv es utilizada para la correcta manipulación del archivo en caso de que haya problemas con los metodos estandar de python. <br>
+- **"random":** random es utilizada para el algoritmo función que permite el agregado de seguidores a un usuario en particular.
+#### Funciones:
+**1.- curar_datos():** Esta función filtra y organiza el dataset original obteniendo el directorio de la carpeta donde se encuentra todo el proyecto, determina la ubicación de la carpeta donde esta el proyecto y crea 2 variables "ruta_entrada" y "ruta_salida" donde almacena la ruta del dataset original y nuevo. Luego crear una lista donde guarda todos los datos del nuevo dataset, abre el archivo en modo lectura, almacena el header y lo filtra con los parametros que necesitamos más la nueva columna que crea el codigo. Crea un set para las ids de usuario (ya que decidimos tomar un solo post por usuario debido al tamaño del dataset elegido) y comienza un loop for, este lee cada fila del csv en la lista, donde se usan las siguientes restricciones para filtrarla de manera adecuada, Si la fila esta vacia salta a la siguiente iteración, se extrae la id del usuario de la fila (conocida como owner_id), si el owner_id no es numerico se salta la fila, y si el owner_id es parte de la lista de ids ya vistas salta tambien, luego se agrega al set de las ids vistas. Así filtra que filas se va a utilizar el dataset curado, las reemplaza en el dataset original y las agrega a la lista con el metodo append(). Cuando la función termina de curar el dataset llama a la otra función del codigo para agregar seguidores para cada usuario y finalmente abre la ruta de salida y crea el nuevo archivo.csv.  
+
+**2.- seguidor_aleatorio():** Está función comienza creando un diccionario donde almacena las ids de usuario junto a su nombre, este lo convierte en lista y crea otra donde se almacena la nueva columna. luego con un ciclo for, guarda la id del usuario de esa fila, elige aleatoriamente un numero entre 1 y 100 (que simboiliza la cantidad de amigos que tendra el usuario de esa fila), y una lista para sus segudiores. Haciendo un ciclo anidado for crea un contador que este dentro del rango de la cantidad de seguidores seleccionado y comienza: Selecciona un id aleatorio de la lista total. Revisa si el id seleccionado es igual al de la fila en la que esta, si lo es reinicia el ciclo. En caso de no serlo toma el username del diccionario de la id seleccionada, revisa si el username esta dentro de la lista de seguidores, si lo está reinicia el ciclo, sino la agrega a la lista de seguidores y aumenta el contador de seguidores. Tras finalizar el agregado, en una nueva variable junta la fila toamda con la lista de seguidores creada y la reemplaza en el dataset curado, así hasta que todos los usuarios tengan seguidores.
+
+### estructuras.py:
+#### Clases:
+- Nodo: Clase generica que crea objetos del tipo para una lista enlazada. Guarda un dato y una referencia al siguiente nodo, inicializan con un parametro para el dato y apuntan a nada.
+- ListaEnlazada: Clase que se usa para crear listas enlazadas. Inicializa con un header o dirección que apunta a nada y un tamaño númerico 0. 
+#### Funciones:
+(Todas las funciones son de la clase ListaEnlazada) <br>
+**1.- insertar():** Crea un nodo nuevo y lo apunta al header de la lista. El primero siempre es el unico nodo en la lisa apunta así mismo (Es O(1) porque no recorre nada) y aumenta el tamaño de la lista en 1. O(n) cada que se agrega un nuevo nodo, misma creacion que la insercion del inicio, con la diferencia que el nuevo nodo se inserta al final de la lista si la lista esta vacía, el nuevo nodo se convierte en la cabeza
+
+**2.- buscar():**
+Recorre la lista nodo por nodo buscando el dato. Retorna True si lo encuentra, False si llega al final sin éxito.  
+
+**3.- recorrer():** Recorre toda la lista y va acumulando cada dato en una lista de Python, que retorna al final. Útil para visualizar el contenido completo.  
+
+### indice_inverso.py:
+
+#### Bibliotecas:
+- **"os":** os es utilizada para la obtención correcta de la ruta de acceso del dataset original que se filtra. <br>
+- **"csv":** csv es utilizada para la correcta manipulación del archivo en caso de que haya problemas con los metodos estandar de python. <br>
+- **"estructuras":** estructuras es un módulo define la estructura de datos, el otro la usa para resolver el problema del dominio (usuarios, posts, índice).
+
+#### Clases:
+- **Clase IndiceInvertido**
+Estructura principal de búsqueda: un diccionario (self.indice) que mapea cada término → ListaEnlazada de IDs de posts que contienen ese término.
+indexar(termino, id_elemento): normaliza el término, descarta stopwords, crea la lista enlazada del término si no existe, y agrega el id_elemento evitando duplicados.
+buscar(termino): retorna la ListaEnlazada asociada a un término (o una vacía si no existe).
+mostrar_indice(): imprime el índice completo por consola (función de apoyo para depuración, sin uso en el flujo del programa).
+
+- **Clase Usuario**
+Modelo de un usuario de la red social.
+Atributos: owner_id, username, y seguidores (una ListaEnlazada).
+agregar_seguidor(username_seguidor): agrega un nuevo seguidor a la lista enlazada del usuario.
+obtener_seguidores(): retorna la lista de seguidores como lista nativa de Python (usando recorrer()).
+
+- **Clase Post**
+Modelo simple de una publicación: shortcode, username (autor), caption y likes. No contiene lógica, es solo contenedor de datos.
+
+- **Clase ProcesadorDataset**
+Orquesta la carga del CSV y la construcción de todas las estructuras del sistema.
+limpiar_texto(texto): normaliza el caption de un post (minúsculas, tokenización simple por espacios) y filtra stopwords, palabras cortas (len <= 2) y no alfabéticas.
+procesar_lista_followers(lista_str): convierte el campo followers del CSV (guardado como texto con formato de lista Python) en una lista real de usernames.
+cargar_datos(): lee el CSV fila por fila, crea/actualiza objetos Usuario, agrega seguidores, crea objetos Post, e indexa los términos del caption en IndiceInvertido. Detecta automáticamente si el delimitador del CSV es coma o punto y coma.
+buscar_posts_por_termino(termino): retorna los shortcodes de posts que contienen un término dado.
+obtener_seguidores_de_usuario(usuario_id): retorna los seguidores de un usuario específico.
+mostrar_post(shortcode): imprime la información de un post por consola.
+
+- **Clase RedSocial**
+Capa de interfaz de usuario (CLI). Inicializa el procesador de datos y expone un menú interactivo:
+Buscar posts por palabra clave (usa el índice invertido).
+Ver seguidores de un usuario (por ID o username).
+Salir.
+
+#### Funciones:
+- **cargar_stopwords(archivo):**
+Carga un archivo de texto con palabras irrelevantes (stopwords) para excluirlas del indexado. Se ejecuta una sola vez al importar el módulo y se guarda en la variable global STOPWORDS, evitando recargar el archivo repetidamente.Carga un archivo de texto con palabras irrelevantes (stopwords) para excluirlas del indexado. Se ejecuta una sola vez al importar el módulo y se guarda en la variable global STOPWORDS, evitando recargar el archivo repetidamente.
