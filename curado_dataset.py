@@ -10,8 +10,6 @@ def curarDatos(nombreEntrada: str):
 
     # Lista para almacenar los datos curados
     datos_curados = []
-    # Conjunto para registrar los owner_id ya procesados
-    owner_ids_vistos = set()
 
     with open(ruta_entrada, mode='r', encoding='utf-8') as archivo:
         # Lee y extrae la primera fila para el dataset curado
@@ -22,75 +20,77 @@ def curarDatos(nombreEntrada: str):
         header_filtrado = [header[i] for i in [0, 1, 2, 4, 6]] + ['followers']    
         datos_curados.append(header_filtrado)
 
+        # Conjunto para registrar los owner_id ya procesados
+        # Esto evita repeticiones que no van en la primera entrega
+        owner_ids_vistos = set()
+        
         # Lee cada fila del CSV como una lista de parametros
         # Si la fila está vacia, saltar a la siguiente iteración
         for parametros in lector:
             if not parametros:
                 continue
 
-            # Verifica que la fila tenga los 14 parametros del dataset
-            # Donde se extrae el owner_id para validar 
-            # la exclusion de owner_ids no numéricos, duplicados y espacios vacios
+            # Se extrae el owner_id para validar las cuentas 
+            # se excluyen filas donde los owner_ids no son numéricos, estan duplicados o en espacios vacios
             # finalmente se agrega el validado al set owner_ids_vistos
-            if len(parametros) >= 14:
-                owner_id = parametros[0]
-                if not owner_id.isdigit():
-                    continue
-                if owner_id in owner_ids_vistos:
-                    continue
-                owner_ids_vistos.add(owner_id)
+            owner_id = parametros[0]
+            if not owner_id.isdigit():
+                continue
+            if owner_id in owner_ids_vistos:
+                continue
+            owner_ids_vistos.add(owner_id)
 
-                # luego se filtran las columnas relevantes
-                # se "limpian" los saltos en fila para despues ser agregados al dataset curado 
-                columnas = [0, 1, 2, 4, 6]
-                fila_filtrada = [parametros[i].replace('\n', ' ') for i in columnas]
-                datos_curados.append(fila_filtrada)
+            # luego se filtran las columnas relevantes
+            # se "limpian" los saltos en fila para despues ser agregados al dataset curado 
+            columnas = [0, 1, 2, 4, 6]
+            fila_filtrada = [parametros[i].replace('\n', ' ') for i in columnas]
+            datos_curados.append(fila_filtrada)
 
-    # al terminar de almacenar el nuevo dataset, se llama a la funcion para agregar amigos
-    datos_curados = amigo_aleatorio(datos_curados)
+    # al terminar de almacenar el nuevo dataset, se llama a la funcion para agregar seguidores
+    datos_curados = seguidor_aleatorio(datos_curados)
 
     # Se escribe el nuevo CSV con todo el dataset curado
     with open(ruta_salida, mode='w', encoding='utf-8', newline='') as archivo_salida:
         escritor = csv.writer(archivo_salida)
         escritor.writerows(datos_curados)
 
-# Funcion que agrega una columna de amigos al dataset curado
-def amigo_aleatorio(datos_curados):
-    # Salta la linea del header y crea un diccionario para almacenar las variables a usar
-    # Guarda todos los owner_id para la seleccion de amigos
+# Funcion que agrega una columna de seguidores al dataset curado
+def seguidor_aleatorio(datos_curados):
+    
+    # el diccionario almacena los ids y sus nombres, actuando como una tabla
+    # de busqueda para el algoritmo de agregación aleatoria 
     id_a_username = {fila[0]: fila[1] for fila in datos_curados[1:]} 
+    # se extraen los ids del diccionario y se convierten en lista
     todos_los_ids = list(id_a_username.keys())
+    # se almacena el dataset con el header, el cual el for salta
+    dataset_curado = [datos_curados[0]]
 
-    # Aqui es donde se almacena la lista seguidores
-    lista_seguidores = [datos_curados[0]]
-
+    # ciclo que recorre cada fila omitiendo el header
     for fila in datos_curados[1:]:
-        # Verificador anti-duplicaods
-        owner_id = fila [0]
-        cantidad = random.randint(1, 70)
-        followers = []
-        # Se utiliza para evitar duplicados en followers
-        followers_set = set()
+        owner_id = fila[0]
+        cantidad = random.randint(1, 100)
+        seguidores = []
 
-        # el loop se encarga de asegurar que se agregue la cantidad aleatoria adecuada
-        while len(followers) < cantidad:
-            # seleciona una id aleatoria de la lista de ids
+        for i in range(cantidad):
+            # la lista de ids se utiliza para seleccionar seguidores aleatorios
             id_aleatorio = random.choice(todos_los_ids)
+            # si la id que selecciono es la del usuario de la fila, se omite
             if id_aleatorio == owner_id:
-                continue
-
+                continue 
+            # se obtiene el username de la id aleatoria seleccionada
             username = id_a_username[id_aleatorio]
-            # Omite el username si ya esta en la lista de seguidores
-            if username in followers_set:
+            # si el username ya esta en la lista de seguidores, se omite
+            if username in seguidores:
                 continue
+            # Se agrega el dicho username a las lista de seguidores
+            seguidores.append(username)
+            i += 1
             
-            # Se agrega el dicho username a las dos listas
-            followers.append(username)
-            followers_set.add(username) 
-
         # Finalmente agrega la fila entera más la lista de followers
-        nueva_fila = fila + [str(followers)]
-        lista_seguidores.append(nueva_fila)    
-    return lista_seguidores
+        nueva_fila = fila + [seguidores]
+        dataset_curado.append(nueva_fila) 
 
+    return dataset_curado
+
+#funcion principal que comienza con el codigo
 curarDatos('instagram_data.csv')

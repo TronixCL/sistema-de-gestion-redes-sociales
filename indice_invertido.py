@@ -31,7 +31,7 @@ class IndiceInvertido:
 
         # Agregar el inicio para O(1) - documentos más recientes primero
         if not self.indice[termino].buscar(id_elemento):
-            self.indice[termino].insertar_inicio(id_elemento)
+            self.indice[termino].insertar(id_elemento)
     
     def buscar(self, termino):
         # Retorna la lisa enlazada de elemntos que contiene el termino
@@ -54,7 +54,8 @@ class Usuario:
 
     def agregar_seguidor(self, username_seguidor):
     # Agrega un seguidor a la lista enlazada del usuario
-        self.seguidores.insertar_final(username_seguidor)
+        self.seguidores.insertar(username_seguidor)
+
 
     def obtener_seguidores(self):
         # Retorna lista de IDs de amigos
@@ -219,7 +220,7 @@ class RedSocial:
         if resultados:
             print("\nResultados encontrados:")
             # se utiliza el enumerar resultado porque lo que arroja resultados son los captions en si
-            for i, shortcode in enumerate(resultados):
+            for shortcode in resultados:
                 self.procesador.mostrar_post(shortcode)
         elif termino in STOPWORDS:
             print(f" La palabra '{termino}' es una stopword y no se indexa. ")
