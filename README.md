@@ -26,25 +26,51 @@ Este proyecto consiste en implementar la infraestructura base de un sistema de g
 - ListaEnlazada: Clase que se usa para crear listas enlazadas. Inicializa con un header o dirección que apunta a nada y un tamaño númerico 0. 
 #### Funciones:
 (Todas las funciones son de la clase ListaEnlazada) <br>
-**1.- insertar_inicio():** Crea un nodo nuevo y lo apunta al header de la lista. Como es el unico nodo en la lisa apunta así mismo y aumenta el tamaño de la lista en 1. Es O(1) porque no recorre nada.  
+**1.- insertar():** Crea un nodo nuevo y lo apunta al header de la lista. El primero siempre es el unico nodo en la lisa apunta así mismo (Es O(1) porque no recorre nada) y aumenta el tamaño de la lista en 1. O(n) cada que se agrega un nuevo nodo, misma creacion que la insercion del inicio, con la diferencia que el nuevo nodo se inserta al final de la lista si la lista esta vacía, el nuevo nodo se convierte en la cabeza
 
-**2.- insertar_final():** insertar_final(dato) Crea un nodo nuevo y le asigna el header de la lista. Si la lista está vacía lo pone como cabeza; si no, recorre toda la cadena hasta el último nodo y lo enlaza ahí. Es O(n) por ese recorrido.  
-
-**3.- buscar():** buscar(dato)
+**2.- buscar():**
 Recorre la lista nodo por nodo buscando el dato. Retorna True si lo encuentra, False si llega al final sin éxito.  
 
-**4.- eliminar():** Busca y elimina el primer nodo que contenga el dato:
-Si es la cabeza, mueve la cabeza al siguiente nodo.
-Si no, recorre hasta encontrarlo y "salta" ese nodo reconectando los punteros.
-Retorna True si eliminó algo, False si no lo encontró.  
-
-**5.- recorrer():** recorrer()
-Recorre toda la lista y va acumulando cada dato en una lista de Python, que retorna al final. Útil para visualizar el contenido completo.  
-
-**6.- len():**__len__
-Retorna directamente el atributo tamaño. Es O(1) porque el tamaño se mantiene actualizado en cada inserción y eliminación, sin necesidad de contar.
+**3.- recorrer():** Recorre toda la lista y va acumulando cada dato en una lista de Python, que retorna al final. Útil para visualizar el contenido completo.  
 
 ### indice_inverso.py:
-#### Bibliotecas
+
+#### Bibliotecas:
+- **"os":** os es utilizada para la obtención correcta de la ruta de acceso del dataset original que se filtra. <br>
+- **"csv":** csv es utilizada para la correcta manipulación del archivo en caso de que haya problemas con los metodos estandar de python. <br>
+- **"estructuras":** estructuras es un módulo define la estructura de datos, el otro la usa para resolver el problema del dominio (usuarios, posts, índice).
+
 #### Clases:
+- **Clase IndiceInvertido**
+Estructura principal de búsqueda: un diccionario (self.indice) que mapea cada término → ListaEnlazada de IDs de posts que contienen ese término.
+indexar(termino, id_elemento): normaliza el término, descarta stopwords, crea la lista enlazada del término si no existe, y agrega el id_elemento evitando duplicados.
+buscar(termino): retorna la ListaEnlazada asociada a un término (o una vacía si no existe).
+mostrar_indice(): imprime el índice completo por consola (función de apoyo para depuración, sin uso en el flujo del programa).
+
+- **Clase Usuario**
+Modelo de un usuario de la red social.
+Atributos: owner_id, username, y seguidores (una ListaEnlazada).
+agregar_seguidor(username_seguidor): agrega un nuevo seguidor a la lista enlazada del usuario.
+obtener_seguidores(): retorna la lista de seguidores como lista nativa de Python (usando recorrer()).
+
+- **Clase Post**
+Modelo simple de una publicación: shortcode, username (autor), caption y likes. No contiene lógica, es solo contenedor de datos.
+
+- **Clase ProcesadorDataset**
+Orquesta la carga del CSV y la construcción de todas las estructuras del sistema.
+limpiar_texto(texto): normaliza el caption de un post (minúsculas, tokenización simple por espacios) y filtra stopwords, palabras cortas (len <= 2) y no alfabéticas.
+procesar_lista_followers(lista_str): convierte el campo followers del CSV (guardado como texto con formato de lista Python) en una lista real de usernames.
+cargar_datos(): lee el CSV fila por fila, crea/actualiza objetos Usuario, agrega seguidores, crea objetos Post, e indexa los términos del caption en IndiceInvertido. Detecta automáticamente si el delimitador del CSV es coma o punto y coma.
+buscar_posts_por_termino(termino): retorna los shortcodes de posts que contienen un término dado.
+obtener_seguidores_de_usuario(usuario_id): retorna los seguidores de un usuario específico.
+mostrar_post(shortcode): imprime la información de un post por consola.
+
+- **Clase RedSocial**
+Capa de interfaz de usuario (CLI). Inicializa el procesador de datos y expone un menú interactivo:
+Buscar posts por palabra clave (usa el índice invertido).
+Ver seguidores de un usuario (por ID o username).
+Salir.
+
 #### Funciones:
+- **cargar_stopwords(archivo):**
+Carga un archivo de texto con palabras irrelevantes (stopwords) para excluirlas del indexado. Se ejecuta una sola vez al importar el módulo y se guarda en la variable global STOPWORDS, evitando recargar el archivo repetidamente.Carga un archivo de texto con palabras irrelevantes (stopwords) para excluirlas del indexado. Se ejecuta una sola vez al importar el módulo y se guarda en la variable global STOPWORDS, evitando recargar el archivo repetidamente.
