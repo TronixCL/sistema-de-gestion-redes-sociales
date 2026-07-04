@@ -1,6 +1,8 @@
 import csv
 import os
 from estructuras import ListaEnlazada
+from grafo_parte2 import GrafoRedSocial
+from algoritmo_bfs import obtener_grados_conexion
 
 def cargar_stopwords(archivo=os.path.dirname(os.path.abspath(__file__)) + '/stopwords.txt'):
     stopwords = set()
@@ -19,7 +21,6 @@ class IndiceInvertido:
     # Estructura principal del indice invertido
     def __init__(self):
         self.indice = {}
-
     def indexar(self, termino, id_elemento):
         # Agrega un elemento al indice para un término dado
         termino = termino.lower().strip()
@@ -55,7 +56,6 @@ class Usuario:
     def agregar_seguidor(self, username_seguidor):
     # Agrega un seguidor a la lista enlazada del usuario
         self.seguidores.insertar(username_seguidor)
-
 
     def obtener_seguidores(self):
         # Retorna lista de IDs de amigos
@@ -104,6 +104,7 @@ class ProcesadorDataset:
         # Dividir por comas y limpiar
         followers = [f.strip().strip("'\"") for f in lista_str.split(',')]
         return followers
+    
     
     def cargar_datos(self):
         # Carga el archivo CSV y construye todas las estructuras
@@ -187,6 +188,18 @@ class RedSocial:
         print("Sistema de índice invertido\n")
         self.procesador = ProcesadorDataset(archivo_dataset)
         self.procesador.cargar_datos()
+        self.grafo = GrafoRedSocial(self.procesador) 
+        errores_simetria = self.grafo.validar_simetria()
+        if errores_simetria:
+            print(f"\nse encontraron {len(errores_simetria)} relaciones asimétricas en el grafo")
+        else:
+            print("\nGrafo validado: todas las relaciones son simétricas ")
+        
+        bucles_encontrados = self.grafo.validar_sin_bucles()
+        if bucles_encontrados:
+            print(f"{len(bucles_encontrados)} usuarios tienen bucles ")
+        else:
+            print("Grafo validado: no existen bucles ")
     
     def menu(self):
         # Menú principal interactivo
@@ -194,7 +207,8 @@ class RedSocial:
             print("\nMenú principal\n")
             print("1. Buscar posts por palabra clave")
             print("2. Ver seguidores de un usuario")
-            print("3. Salir")
+            print("3. Ver red de contactos (1°, 2° y 3° grado)")
+            print("4. Salir")
             
             opcion = input("\nSeleccione una opción: ").strip()
             
@@ -203,6 +217,8 @@ class RedSocial:
             elif opcion == '2':
                 self.ver_seguidores()
             elif opcion == '3':
+                self.ver_grados()
+            elif opcion == '4':
                 print("¡Hasta luego!")
                 break
             else:
@@ -220,7 +236,7 @@ class RedSocial:
         if resultados:
             print("\nResultados encontrados:")
             # se utiliza el enumerar resultado porque lo que arroja resultados son los captions en si
-            for shortcode in resultados:
+            for i, shortcode in enumerate(resultados):
                 self.procesador.mostrar_post(shortcode)
         elif termino in STOPWORDS:
             print(f" La palabra '{termino}' es una stopword y no se indexa. ")
@@ -232,8 +248,10 @@ class RedSocial:
         entrada = input("Ingrese el ID del usuario: ").strip()
         if not entrada:
             return
-
+        
+        # Se inicializa usuario_id en None para poder detectar despues si no se encontró a nadie   
         usuario_id = None
+        # busca entrada directamente entre las claves
         if entrada in self.procesador.usuarios:
             usuario_id = entrada
         else:
@@ -254,10 +272,64 @@ class RedSocial:
             print(f"  {i}. @{seguidor}")
         if len(seguidores) > 20:
             print(f"  ... y {len(seguidores) - 20} más")
+    
+    def ver_grados(self):
+        entrada = input("Ingrese el ID o username del usuario: ").strip()
+        if not entrada:
+            return
 
+        usuario_id = None
+        if entrada in self.procesador.usuarios:
+            usuario_id = entrada
+        else:
+            for uid, usr in self.procesador.usuarios.items():
+                if usr.username == entrada:
+                    usuario_id = uid
+                    break
+        
+        if not usuario_id:
+            print(f" Usuario '{entrada}' no encontrado.")
+            return
 
-# Punto de entrada principal
+        usr = self.procesador.usuarios[usuario_id]
+        print(f"\nCalculando red para: @{usr.username} (ID: {usr.owner_id})...")
+        
+        c1, c2, c3 = obtener_grados_conexion(self.grafo, usuario_id)
+        # Diccionario para acceder a los sets por numero
+        niveles = {1: c1, 2: c2, 3: c3}
+        
+        print("\nResultados del BFS por Niveles")
+        print(f"1. Contactos de 1° nivel: {len(c1)} usuarios")
+        print(f"2. Contactos de 2° nivel: {len(c2)} usuarios")
+        print(f"3. Contactos de 3° nivel: {len(c3)} usuarios")
+
+        # Bucle de interacción para ver niveles
+        while True:
+            seleccion = input("\n¿Qué nivel quiere ver? (1/2/3): ").strip()
+            if seleccion in ['1', '2', '3']:
+                nivel = int(seleccion)
+                usuarios_nivel = niveles[nivel]
+                
+                print(f"\nUsuarios en nivel {nivel} ({len(usuarios_nivel)}):")
+                for i, usr_id in enumerate(usuarios_nivel, 1):
+                    nombre = self.procesador.usuarios.get(usr_id, usr_id).username if usr_id in self.procesador.usuarios else usr_id
+                    print(f"  {i}. @{nombre}")
+            else:
+                print("Nivel inválido.")
+
+            # Nuevo bucle para validar la respuesta 'si' o 'no'
+            while True:
+                continuar = input("\n¿Ver otro nivel? (si/no): ").lower().strip()
+                if continuar == 'si':
+                    break # Rompe el ciclo interno para volver a preguntar el nivel
+                elif continuar == 'no':
+                    return # Retorna al menú principal
+                else:
+                    print("Por favor, responda solo 'si' o 'no'.")
+        
+        
+# Ejecucion
 if __name__ == "__main__":
     # Crear y ejecutar la red social
-    app = RedSocial("dataset_curado.csv")
+    app = RedSocial("dataset_curadoParaGrafos.csv")
     app.menu()
