@@ -29,7 +29,6 @@ class GrafoRedSocial:
             self.lista_adyacencia[uid] = vecinos
 
     def normalizar_id(self, identificador):
-        
         return self.username_a_id.get(identificador, identificador)
 
     def obtener_contactos_directos(self, identificador):
@@ -41,10 +40,6 @@ class GrafoRedSocial:
         # Convierte la ListaEnlazada a lista Python para que el BFS la recorra normal
         return self.lista_adyacencia[id_usuario].recorrer()
 
-    def validar_grafo(self):
-        total_usuarios = len(self.vertices)
-        return total_usuarios
-    
     def validar_simetria(self):
         # Recorre toda la lista de adyacencia y confirma que cada relacion
         # sea reciproca: si A tiene a B como vecino, B debe tener a A
