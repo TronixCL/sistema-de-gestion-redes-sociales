@@ -18,7 +18,7 @@ El proyecto está modularizado en los siguientes scripts principales:
 
 ## Instrucciones de Ejecución
 
-1.  Asegúrese de tener Python 3.x instalado. No se requieren librerías externas (como `pandas` o `networkx`), ya que todas las estructuras han sido desarrolladas nativamente para este proyecto.
+1.  Asegúrese de tener Python 3.x instalado.
 2.  Coloque todos los archivos `.py`, el dataset `.csv` y `stopwords.txt` en el mismo directorio.
 3.  *(Opcional)* Si desea generar un nuevo dataset aleatorio, ejecute: `python curado_dataset_paraGrafos.py`
 4.  Para iniciar el sistema y el menú interactivo, ejecute: 
