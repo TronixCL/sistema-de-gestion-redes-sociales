@@ -6,7 +6,7 @@ Este proyecto implementa el backend de análisis y búsqueda para una red social
 
 El proyecto está modularizado en los siguientes scripts principales:
 
-* **`main.py` / `indice_invertido.py`**: Interfaz de usuario (CLI) y orquestación del procesamiento de datos.
+* **`main.py`**: Interfaz de usuario (CLI) y orquestación del procesamiento de datos.
 * **`estructuras.py`**: Implementación desde cero de nodos y listas enlazadas (usadas como base para las demás estructuras).
 * **`curado_dataset_paraGrafos.py`**: Preprocesador de datos que limpia el CSV original y genera relaciones de amistad simétricas controladas.
 * **`grafo_parte2.py`**: Implementación del modelo de Grafo No Dirigido mediante listas de adyacencia.
