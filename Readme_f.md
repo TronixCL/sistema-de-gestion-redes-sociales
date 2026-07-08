@@ -46,9 +46,9 @@ Para contabilizar la frecuencia del vocabulario de la red social en tiempo $O(1)
 * **Función de Dispersión:** Se implementa el algoritmo **`djb2`** (Daniel J. Bernstein). Para asegurar el rendimiento en Python, el valor se trunca a 32 bits en cada iteración mediante una máscara a nivel de bits (`hash_val &= 0xFFFFFFFF`).
 * **Resolución de Colisiones:** Se utiliza **Encadenamiento Separado**. El arreglo base almacena referencias a la `ListaEnlazada` de la Entrega I. Los pares `(término, frecuencia)` que colisionan en un índice se anexan a esta lista.
 * **Dimensionamiento y Factor de Carga ($\alpha$):** Para mantener un factor de carga eficiente ($\alpha \le 0.67$), el arreglo se dimensiona con un número primo $M \ge 1.5 \times N$.
-    * **N (Tamaño del vocabulario detectado):** *[NOTA AL ALUMNO: Reemplaza esto con la cantidad de palabras de tu índice, ej. 4150]*
-    * **M (Tamaño primo de la Tabla Hash):** *[NOTA AL ALUMNO: Reemplaza con el primo seleccionado de la tabla de la rúbrica, ej. 10007]*
-    * **$\alpha$ (Factor de carga actual):** *[NOTA AL ALUMNO: Calcula N / M, ej. 0.41]*
+    * **N (Tamaño del vocabulario detectado):*9323* 
+    * **M (Tamaño primo de la Tabla Hash):*13997*
+    * **$\alpha$ (Factor de carga actual):*0.6661* 
 * **Funcionalidad Top-N:** Se incluye un método de ordenamiento que permite extraer los $N$ términos más repetidos en la red social.
 
 ---
