@@ -48,7 +48,7 @@ Para contabilizar la frecuencia del vocabulario de la red social en tiempo $O(1)
 * **Dimensionamiento y Factor de Carga ($\alpha$):** Para mantener un factor de carga eficiente ($\alpha \le 0.67$), el arreglo se dimensiona con un número primo $M \ge 1.5 \times N$.
     * **N (Tamaño del vocabulario detectado):*9323* 
     * **M (Tamaño primo de la Tabla Hash):*13997*
-    * **$\alpha$ (Factor de carga actual):*0.6661* 
+    * **alpha (Factor de carga actual):*0.6661* 
 * **Funcionalidad Top-N:** Se incluye un método de ordenamiento que permite extraer los $N$ términos más repetidos en la red social.
 
 ---
