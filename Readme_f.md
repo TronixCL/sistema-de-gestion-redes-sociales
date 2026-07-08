@@ -52,4 +52,3 @@ Para contabilizar la frecuencia del vocabulario de la red social en tiempo $O(1)
 * **Funcionalidad Top-N:** Se incluye un método de ordenamiento que permite extraer los $N$ términos más repetidos en la red social.
 
 ---
-*Documentación generada para cumplir con los estándares técnicos y funcionales de la evaluación de Estructuras de Datos.*
