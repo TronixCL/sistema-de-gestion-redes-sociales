@@ -10,7 +10,7 @@ def djb2(cadena):
     for caracter in cadena:
         # hash(i) = hash(i-1) * 33 + c[i]
         hash_val = (hash_val * 33) + ord(caracter)
-        # OBLIGATORIO en Python: truncar a 32 bits en cada iteracion,
+        #truncar a 32 bits en cada iteracion,
         # de lo contrario el entero crece indefinidamente (precision
         # arbitraria) y el rendimiento se degrada
         hash_val &= 0xFFFFFFFF
@@ -52,9 +52,7 @@ def siguiente_primo(n):
 
 def calcular_tamano_tabla(n_vocabulario):
     # Calcula M como el menor primo que cumple M >= 1.5 * N
-    # (factor de carga alpha <= 0.67), segun el enunciado
-    # ANTES: se simulaba el redondeo hacia arriba con un if manual
-    # AHORA: math.ceil() hace lo mismo en una sola linea, sin duplicar logica
+    # (factor de carga alpha <= 0.67), segun el enunciad
     minimo_requerido = math.ceil(n_vocabulario * 1.5)
     return siguiente_primo(minimo_requerido)
 
@@ -90,7 +88,7 @@ class TablaHash:
         return djb2(termino) % self.m
 
     def _buscar_par(self, lista_en_posicion, termino):
-        # NUEVO: metodo auxiliar que unifica la busqueda de un par dentro
+        # metodo auxiliar que unifica la busqueda de un par dentro
         # de una lista de una posicion. ANTES esta misma logica estaba
         # repetida por separado en insertar() y en obtener_frecuencia();
         # ahora ambos reutilizan este unico metodo.
@@ -112,7 +110,7 @@ class TablaHash:
             par_existente.contador += 1  # ya existe: solo se incrementa
             return
 
-        # No existia: si la lista ya tenia algun elemento, es una colision.
+        # si la lista ya tenia algun elemento, es una colision.
         # Se usa lista_en_posicion.tamaño (atributo ya trackeado por
         # ListaEnlazada) en vez de volver a recorrer la lista para contar
         if lista_en_posicion.tamaño > 0:
@@ -125,9 +123,8 @@ class TablaHash:
     def top_n(self, n):
         # Recorre TODA la tabla, junta todos los pares (termino, contador)
         # y retorna los n con mayor frecuencia, ordenados descendente.
-        # NOTA: sorted() es una funcion de ordenamiento de Python, no una
+        # sorted() es una funcion de ordenamiento de Python, no una
         # estructura hash, por lo que no viola la restriccion del enunciado
-        # (la restriccion aplica solo a dict/HashMap/unordered_map).
         todos_los_pares = []
         for lista_en_posicion in self.tabla:
             todos_los_pares.extend(lista_en_posicion.recorrer())
